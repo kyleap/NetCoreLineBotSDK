@@ -2,12 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Kyle Shen</Authors>
     <Company>Kyle Studio</Company>
     <Description>SDK for the LINE Messaging API for .NET Core.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>true</IsPackable>
+    <RepositoryUrl>https://github.com/kyleap/NetCoreLineBotSDK</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
