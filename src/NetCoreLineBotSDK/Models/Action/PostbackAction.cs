@@ -8,6 +8,12 @@ namespace NetCoreLineBotSDK.Models.Action
 {
     public class PostbackAction : IAction
     {
+        public PostbackAction(string data, string label = "")
+        {
+            Data = data;
+            Label = string.IsNullOrEmpty(label) ? data : label;
+        }
+
         public PostbackAction(string text, string data, string label = "")
         {
             Text = text;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NetCoreLineBotSDK.Interfaces
 {
-    public interface ITemplate : IRequestMessage
+    public interface IRequestMessage
     {
     }
 }

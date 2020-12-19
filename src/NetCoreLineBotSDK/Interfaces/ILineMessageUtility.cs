@@ -16,6 +16,7 @@ namespace NetCoreLineBotSDK.Interfaces
         Task<List<string>> GetRichMenuListAsync();
         Task<UserProfile> GetUserProfile(string userId);
         Task ReplyMessageAsync(string replyToken, IList<IMessage> messages);
+        Task ReplyMessageAsync(string replyToken, IList<IRequestMessage> messages);
         Task ReplyMessageAsync(string replyToken, params string[] messages);
         Task ReplyMessageByJsonAsync(string replyToken, string jsonString);
         Task ReplyTemplateMessageAsync(string replyToken, ButtonTemplate template);

@@ -5,7 +5,7 @@ using NetCoreLineBotSDK.Enums;
 
 namespace NetCoreLineBotSDK.Interfaces
 {
-    public interface IMessage
+    public interface IMessage : IRequestMessage
     {
         public LineMessageType Type { get; }
     }
