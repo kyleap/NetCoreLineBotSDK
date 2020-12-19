@@ -116,6 +116,48 @@ namespace NetCoreLineBotSDK.Utility
             }
         }
 
+        public async Task ReplyMessageAsync(string replyToken, IList<IRequestMessage> messages)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                using (var request = new HttpRequestMessage(new HttpMethod("POST"), $"{lineMessageReplyApiBaseUrl}"))
+                {
+                    request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
+
+                    LineMessageReq req = new LineMessageReq();
+                    req.ReplyToken = replyToken;
+
+                    foreach (var message in messages)
+                    {
+                        if (message is IMessage)
+                        {
+                            req.Messages.Add(message);
+                        }
+                        else if (message is ITemplate)
+                        {
+                            req.Messages.Add(new TemplateMessageBase()
+                            {
+                                Template = message as ITemplate
+                            });
+                        }
+                    }
+
+                    var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        ContractResolver = new DefaultContractResolver
+                        {
+                            NamingStrategy = new CamelCaseNamingStrategy()
+                        }
+                    });
+
+                    request.Content = new StringContent(postJson);
+                    request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+                    var response = await httpClient.SendAsync(request);
+                }
+            }
+        }
+
         public async Task ReplyTemplateMessageAsync(string replyToken, IList<ITemplate> templates)
         {
             using (var httpClient = new HttpClient())

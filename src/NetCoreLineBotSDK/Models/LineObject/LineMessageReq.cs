@@ -9,6 +9,6 @@ namespace NetCoreLineBotSDK.Models
     public class LineMessageReq
     {
         public string ReplyToken { get; set; }
-        public List<IMessage> Messages { get; set; } = new List<IMessage>();
+        public List<IRequestMessage> Messages { get; set; } = new List<IRequestMessage>();
     }
 }
