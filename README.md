@@ -32,6 +32,14 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
+## appsettings.json 增加ChannelSecret/ChannelAccessToken
+```
+"LineSetting": {
+    "ChannelSecret": "<Your Line Channel Secret>",
+    "ChannelAccessToken": "<Your Line Channel Access Token>"
+}
+```
+
 ## 新增一個 Web Api Controller
 ```
 [Route("api/[controller]")]
@@ -76,13 +84,7 @@ public class LineBotSampleApp : LineBotApp
 ## 完成第一個 Echo Bot
 
 ![Echo Bot](https://cdn-images-1.medium.com/max/2000/1*B0DebLjQGDgAYdHG70Bkng.png))
-## appsettings.json 增加token
-```
-"LineSetting": {
-    "ChannelSecret": "<Your Line Channel Secret>",
-    "ChannelAccessToken": "<Your Line Channel Access Token>"
-}
-```
+
 
 # Line message Api 官方文件
 
