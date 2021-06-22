@@ -4,9 +4,9 @@ Line Message Api .NET 5 SDK
 
 ```
 Nuget
-Install-Package NetCoreLineBotSDK -Version 0.2.0
+Install-Package NetCoreLineBotSDK -Version 1.0.0
 dotnet cli
-dotnet add package NetCoreLineBotSDK --version 0.2.0
+dotnet add package NetCoreLineBotSDK --version 1.0.0
 ```
 
 # 快速開始
