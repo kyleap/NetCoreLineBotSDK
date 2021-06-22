@@ -3,13 +3,14 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json.Serialization;
 
 namespace NetCoreLineBotSDK.Enums
 {
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
     public enum ImageSizeType
     {
-        cover,
-        contain
+        Cover,
+        Contain
     }
 }

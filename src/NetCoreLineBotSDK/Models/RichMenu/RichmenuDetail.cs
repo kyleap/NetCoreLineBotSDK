@@ -5,8 +5,14 @@ using System.Text;
 
 namespace NetCoreLineBotSDK.Models.Message.RichMenu
 {
+    public class CreateRichMenu
+    {
+        public bool IsDefault { get; set; }
+        public string ImgUrl { get; set; }
+        public RichmenuDetail RichDetail { get; set; }
+    }
 
-    public class CreateRichmenu
+    public class RichmenuDetail
     {
         public string richMenuId { get; set; }
         public string name { get; set; }

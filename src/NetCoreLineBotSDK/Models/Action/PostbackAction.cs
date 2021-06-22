@@ -23,7 +23,7 @@ namespace NetCoreLineBotSDK.Models.Action
 
         public string Data { get; set; }
         public string Text { get; set; }
-        public ActionType Type => ActionType.postback;
+        public ActionType Type => ActionType.Postback;
         public string Label { get; set; }
     }
 }

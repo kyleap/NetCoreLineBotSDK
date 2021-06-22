@@ -16,7 +16,7 @@ namespace NetCoreLineBotSDK.Models.Action
             Label = string.IsNullOrEmpty(label) ? text : label;
         }
         public string Text { get; set; }
-        public ActionType Type => ActionType.message;
+        public ActionType Type => ActionType.Message;
         public string Label { get; set; }
     }
 

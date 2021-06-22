@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using NetCoreLineBotSDK.Enums;
 using NetCoreLineBotSDK.Interfaces;
+using Newtonsoft.Json.Serialization;
 
 namespace NetCoreLineBotSDK.Models.Message
 {
@@ -12,7 +13,7 @@ namespace NetCoreLineBotSDK.Models.Message
     {
         public string Text { get; set; }
 
-        public LineMessageType Type => LineMessageType.text;
+        public LineMessageType Type => LineMessageType.Text;
 
         public QuickReply QuickReply { get; set; }
     }

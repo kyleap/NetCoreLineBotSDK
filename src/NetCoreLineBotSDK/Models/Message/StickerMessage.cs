@@ -11,7 +11,7 @@ namespace NetCoreLineBotSDK.Models.Message
     /// </summary>
     public class StickerMessage : IMessage
     {
-        public LineMessageType Type => LineMessageType.sticker;
+        public LineMessageType Type => LineMessageType.Sticker;
         public string PackageId { get; set; }
         public string StickerId { get; set; }
     }

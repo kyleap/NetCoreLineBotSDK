@@ -3,19 +3,20 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json.Serialization;
 
 namespace NetCoreLineBotSDK.Enums
 {
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
     public enum ImageAspectRatioType
     {
         /// <summary>
         /// 1.51:1
         /// </summary>
-        rectangle,
+        Rectangle,
         /// <summary>
         /// 1:1
         /// </summary>
-        square
+        Square
     }
 }

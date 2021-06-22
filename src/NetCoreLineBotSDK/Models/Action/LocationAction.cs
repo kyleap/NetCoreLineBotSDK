@@ -9,7 +9,7 @@ namespace NetCoreLineBotSDK.Models.Action
         {
             Label = _label;
         }
-        public ActionType Type => ActionType.location;
+        public ActionType Type => ActionType.Location;
         public string Label { get; set; }
     }
 

@@ -9,7 +9,7 @@ namespace NetCoreLineBotSDK.Models.Message
 {
     public class TemplateMessageBase : IMessage
     {
-        public LineMessageType Type => LineMessageType.template;
+        public LineMessageType Type => LineMessageType.Template;
         public string AltText => "此訊息不支援桌面版的Line";
         public ITemplate Template { get; set; }
     }

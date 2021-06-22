@@ -3,7 +3,7 @@ using NetCoreLineBotSDK.Interfaces;
 
 namespace NetCoreLineBotSDK.Models.Action
 {
-    public class UriAction : IAction
+    public class UriAction : IAction, IRequestMessage
     {
         /// <param name="uri">網址</param>
         /// <param name="label">顯示文字</param>
@@ -13,7 +13,7 @@ namespace NetCoreLineBotSDK.Models.Action
             Label = label;
         }
         public string Uri { get; set; }
-        public ActionType Type => ActionType.uri;
+        public ActionType Type => ActionType.Uri;
         public string Label { get; set; }
     }
 
