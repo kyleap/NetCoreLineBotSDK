@@ -5,7 +5,7 @@ namespace NetCoreLineBotSDK.Models.Action
 {
     public class CameraRollAction : IAction
     {
-        public ActionType Type => ActionType.cameraRoll;
+        public ActionType Type => ActionType.CameraRoll;
         public string Label { get; set; }
     }
 

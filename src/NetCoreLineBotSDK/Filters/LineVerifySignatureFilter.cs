@@ -36,17 +36,25 @@ namespace NetCoreLineBotSDK.Filters
             string requestBody = new StreamReader(context.HttpContext.Request.Body).ReadToEndAsync().Result;
             context.HttpContext.Request.Body.Position = 0;
 
+            var Debug = context.HttpContext.Request.Headers["Debug"].ToString();
             var xLineSignature = context.HttpContext.Request.Headers["X-Line-Signature"].ToString();
             var channelSecret = Encoding.UTF8.GetBytes(lineSetting.Value.ChannelSecret);
             var body = Encoding.UTF8.GetBytes(requestBody);
 
-            using (HMACSHA256 hmac = new HMACSHA256(channelSecret))
+            #if !DEBUG
+            Debug = "";
+            #endif
+            
+            if (string.IsNullOrEmpty(Debug))
             {
-                var hash = hmac.ComputeHash(body, 0, body.Length);
-                var xLineBytes = Convert.FromBase64String(xLineSignature);
-                if (SlowEquals(xLineBytes, hash) == false)
+                using (HMACSHA256 hmac = new HMACSHA256(channelSecret))
                 {
-                    context.Result = new ForbidResult();
+                    var hash = hmac.ComputeHash(body, 0, body.Length);
+                    var xLineBytes = Convert.FromBase64String(xLineSignature);
+                    if (SlowEquals(xLineBytes, hash) == false)
+                    {
+                        context.Result = new ForbidResult();
+                    }
                 }
             }
         }

@@ -14,8 +14,8 @@ namespace NetCoreLineBotSDK.Models.Message
         /// JPEG or PNG
         /// </summary>
         public string ThumbnailImageUrl { get; set; }
-        public ImageAspectRatioType ImageAspectRatio { get; set; } = ImageAspectRatioType.rectangle;
-        public ImageSizeType ImageSize { get; set; } = ImageSizeType.cover;
+        public ImageAspectRatioType ImageAspectRatio { get; set; } = ImageAspectRatioType.Rectangle;
+        public ImageSizeType ImageSize { get; set; } = ImageSizeType.Cover;
         public string ImageBackgroundColor { get; set; } = "#000000";
         public string Title { get; set; }
         public string Text { get; set; }

@@ -8,7 +8,7 @@ namespace NetCoreLineBotSDK.Models.Message
 {
     public class LocationMessage : IMessage
     {
-        public LineMessageType Type => LineMessageType.location;
+        public LineMessageType Type => LineMessageType.Location;
         public string Title { get; set; }
         public string Address { get; set; }
         public decimal Latitude { get; set; }

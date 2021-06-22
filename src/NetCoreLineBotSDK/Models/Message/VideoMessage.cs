@@ -8,7 +8,7 @@ namespace NetCoreLineBotSDK.Models.Message
 {
     public class VideoMessage : IMessage
     {
-        public LineMessageType Type => LineMessageType.video;
+        public LineMessageType Type => LineMessageType.Video;
         public string OriginalContentUrl { get; set; }
         public string PreviewImageUrl { get; set; }
         public string TrackingId { get; set; }

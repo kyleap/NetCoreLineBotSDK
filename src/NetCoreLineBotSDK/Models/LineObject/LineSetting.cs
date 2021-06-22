@@ -9,5 +9,6 @@ namespace NetCoreLineBotSDK.Models
     {
         public string ChannelSecret { get; set; }
         public string ChannelAccessToken { get; set; }
+        public string AccountLinkUrl { get; set; }
     }
 }

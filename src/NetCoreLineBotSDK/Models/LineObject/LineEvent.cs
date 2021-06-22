@@ -16,6 +16,7 @@ namespace NetCoreLineBotSDK.Models.LineObject
         public LineMessage message { get; set; }
         public VideoPlayComplete videoPlayComplete { get; set; }
         public Beacon beacon { get; set; }
+        public Link link { get; set;}
         public PostBack postback { get; set; }
     }
 }

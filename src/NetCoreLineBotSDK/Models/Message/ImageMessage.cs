@@ -8,7 +8,7 @@ namespace NetCoreLineBotSDK.Models.Message
 {
     public class ImageMessage : IMessage
     {
-        public LineMessageType Type => LineMessageType.image;
+        public LineMessageType Type => LineMessageType.Image;
         public string OriginalContentUrl { get; set; }
         public string PreviewImageUrl { get; set; }
     }

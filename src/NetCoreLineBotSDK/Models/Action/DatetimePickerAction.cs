@@ -10,7 +10,7 @@ namespace NetCoreLineBotSDK.Models.Action
         public string initial { get; set; }
         public string max { get; set; }
         public string min { get; set; }
-        public ActionType Type => ActionType.datetimepicker;
+        public ActionType Type => ActionType.Datetimepicker;
         public string Label { get; set; }
     }
 
