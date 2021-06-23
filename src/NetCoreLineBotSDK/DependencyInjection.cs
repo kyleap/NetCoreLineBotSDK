@@ -18,7 +18,7 @@ namespace NetCoreLineBotSDK
             });
 
             services.Configure<LineSetting>(option => configuration.GetSection("LineSetting").Bind(option));
-            services.AddTransient<ILineMessageUtility, LineMessageUtility>();
+            services.AddHttpClient<ILineMessageUtility, LineMessageUtility>();
             return services;
         }
     }

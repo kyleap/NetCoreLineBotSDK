@@ -31,10 +31,12 @@ namespace NetCoreLineBotSDK.Utility
 
 
         public LineMessageUtility(IOptions<LineSetting> lineSetting, IHttpClientFactory httpClient)
+        public LineMessageUtility(IOptions<LineSetting> lineSetting, HttpClient httpClient)
         {
             _accessToken = lineSetting.Value.ChannelAccessToken;
             _accountLinkUrl = lineSetting.Value.AccountLinkUrl;
             _httpClient = httpClient.CreateClient();
+            _httpClient = httpClient;
         }
 
         public async Task<UserProfile> GetUserProfile(string userId)
