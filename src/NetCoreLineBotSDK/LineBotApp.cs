@@ -1,8 +1,6 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
 using NetCoreLineBotSDK.Models.LineObject;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK
@@ -30,7 +28,7 @@ namespace NetCoreLineBotSDK
                         await OnUnfollowAsync(e);
                         break;
                     case Enums.WebhookEventType.Postback:
-                        await OnUnPostbackAsync(e);
+                        await OnPostbackAsync(e);
                         break;
                     case Enums.WebhookEventType.Beacon:
                         await OnBeaconAsync(e);
@@ -44,7 +42,7 @@ namespace NetCoreLineBotSDK
         protected virtual Task OnMessageAsync(LineEvent ev) => Task.CompletedTask;
         protected virtual Task OnFollowAsync(LineEvent ev) => Task.CompletedTask;
         protected virtual Task OnUnfollowAsync(LineEvent ev) => Task.CompletedTask;
-        protected virtual Task OnUnPostbackAsync(LineEvent ev) => Task.CompletedTask;
+        protected virtual Task OnPostbackAsync(LineEvent ev) => Task.CompletedTask;
         protected virtual Task OnBeaconAsync(LineEvent ev) => Task.CompletedTask;
     }
 }
