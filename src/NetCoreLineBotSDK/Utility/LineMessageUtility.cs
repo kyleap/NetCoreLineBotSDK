@@ -29,14 +29,11 @@ namespace NetCoreLineBotSDK.Utility
         private const string LineMessageRichMenuAttachApiBaseUrl = "https://api-data.line.me/v2/bot/richmenu";
         private const string LineMessageLinkTokenUrl = "https://api.line.me/v2/bot/user/{userId}/linkToken";
 
-
         public LineMessageUtility(IOptions<LineSetting> lineSetting, IHttpClientFactory httpClient)
-        public LineMessageUtility(IOptions<LineSetting> lineSetting, HttpClient httpClient)
         {
             _accessToken = lineSetting.Value.ChannelAccessToken;
             _accountLinkUrl = lineSetting.Value.AccountLinkUrl;
             _httpClient = httpClient.CreateClient();
-            _httpClient = httpClient;
         }
 
         public async Task<UserProfile> GetUserProfile(string userId)
