@@ -29,11 +29,11 @@ namespace NetCoreLineBotSDK.Utility
         private const string LineMessageRichMenuAttachApiBaseUrl = "https://api-data.line.me/v2/bot/richmenu";
         private const string LineMessageLinkTokenUrl = "https://api.line.me/v2/bot/user/{userId}/linkToken";
 
-        public LineMessageUtility(IOptions<LineSetting> lineSetting, IHttpClientFactory httpClient)
+        public LineMessageUtility(IOptions<LineSetting> lineSetting, HttpClient httpClient)
         {
             _accessToken = lineSetting.Value.ChannelAccessToken;
             _accountLinkUrl = lineSetting.Value.AccountLinkUrl;
-            _httpClient = httpClient.CreateClient();
+            _httpClient = httpClient;
         }
 
         public async Task<UserProfile> GetUserProfile(string userId)
@@ -83,9 +83,6 @@ namespace NetCoreLineBotSDK.Utility
 
         public async Task ReplyMessageAsync(string replyToken, IList<IRequestMessage> messages)
         {
-            using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageReplyApiBaseUrl}");
-            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
-
             var req = new LineMessageReq {ReplyToken = replyToken};
 
             foreach (var message in messages)
@@ -106,48 +103,14 @@ namespace NetCoreLineBotSDK.Utility
                         break;
                 }
             }
-
-            var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                },
-                Formatting = Formatting.Indented,
-                Converters = {new StringEnumConverter(typeof(SnakeCaseNamingStrategy))}
-            }).Replace("\"", @"""");
-
-            request.Content = new StringContent(postJson);
-            request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-            var response = await _httpClient.SendAsync(request);
+            await MakePostRequestToLineApi(req);
         }
 
         public async Task ReplyMessageByJsonAsync(string replyToken, string jsonString)
         {
-            using (var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageReplyApiBaseUrl}"))
-            {
-                request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
-
-                var req = new LineMessageReq {ReplyToken = replyToken};
-
-                req.Messages.Add(new FlexMessage(JsonConvert.DeserializeObject(jsonString)));
-
-                var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    ContractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new CamelCaseNamingStrategy()
-                    },
-                    Formatting = Formatting.Indented
-                }).Replace("\"", @"""");
-
-                request.Content = new StringContent(postJson);
-                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-                var response = await _httpClient.SendAsync(request);
-                var result = await response.Content.ReadAsStringAsync();
-            }
+            var req = new LineMessageReq { ReplyToken = replyToken };
+            req.Messages.Add(new FlexMessage(JsonConvert.DeserializeObject(jsonString)));
+            await MakePostRequestToLineApi(req);
         }
 
         public async Task<Stream> GetContentBytesAsync(string messageId)
@@ -262,6 +225,31 @@ namespace NetCoreLineBotSDK.Utility
         public string GetAccountLinkUrl()
         {
             return  $"{_accountLinkUrl}";
+        }
+
+        private async Task MakePostRequestToLineApi(LineMessageReq req)
+        {
+            var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                },
+                Formatting = Formatting.Indented,
+                Converters = { new StringEnumConverter(typeof(SnakeCaseNamingStrategy)) }
+            }).Replace("\"", @"""");
+
+
+            using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageReplyApiBaseUrl}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            request.Content = new StringContent(postJson);
+            request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            var response = await _httpClient.SendAsync(request);
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode == HttpStatusCode.OK) return;
+            throw new Exception(content);
         }
     }
 }

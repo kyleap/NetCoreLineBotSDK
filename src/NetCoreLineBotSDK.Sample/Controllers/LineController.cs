@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NetCoreLineBotSDK.Filters;
 using NetCoreLineBotSDK.Interfaces;
 using NetCoreLineBotSDK.Models;
@@ -15,18 +16,18 @@ namespace NetCoreLineBotSDK.Sample.Controllers
     [ApiController]
     public class LineController : ControllerBase
     {
-        private readonly ILineMessageUtility lineMessageUtility;
-        public LineController(ILineMessageUtility _lineMessageUtility)
+        private readonly LineBotSampleApp _app;
+
+        public LineController(LineBotSampleApp app)
         {
-            lineMessageUtility = _lineMessageUtility;
+            _app = app;
         }
 
         [HttpPost]
         [LineVerifySignature]
         public async Task<IActionResult> Post(WebhookEvent request)
         {
-            var app = new LineBotSampleApp(lineMessageUtility);
-            await app.RunAsync(request.events);
+            await _app.RunAsync(request.events);
             return Ok();
         }
     }

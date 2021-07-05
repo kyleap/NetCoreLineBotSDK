@@ -1,5 +1,7 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
 using NetCoreLineBotSDK.Models.LineObject;
+using NetCoreLineBotSDK.Sample.Interfaces;
+using NetCoreLineBotSDK.Sample.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +11,37 @@ namespace NetCoreLineBotSDK.Sample.Apps
 {
     public class LineBotSampleApp : LineBotApp
     {
-        private readonly ILineMessageUtility lineMessageUtility;
-        public LineBotSampleApp(ILineMessageUtility _lineMessageUtility) : base(_lineMessageUtility)
+        private readonly ILineMessageUtility _lineMessageUtility;
+
+        public IProviderFactory _factory { get; }
+
+        public LineBotSampleApp(ILineMessageUtility lineMessageUtility, IProviderFactory factory) : base(lineMessageUtility)
         {
-            lineMessageUtility = _lineMessageUtility;
+            _lineMessageUtility = lineMessageUtility;
+            _factory = factory;
         }
 
         protected override async Task OnMessageAsync(LineEvent ev)
         {
-            await lineMessageUtility.ReplyMessageAsync(ev.replyToken, $"You Said:{ev.message.Text}");
+            // Get Line User Profile
+            var lineUser = await _lineMessageUtility.GetUserProfile(ev.source.userId);
+
+            var request = new MessageRequestDTO()
+            {
+                Intent = ev.message.Text,
+                Message = ev.message.Text,
+                UserId = ev.source.userId,
+                DisplayName = lineUser.displayName,
+                IsFromGroup = ev.source.type == "group",
+                PostbackParams = ev.postback?.@params
+            };
+
+            if (ev.message.Type == NetCoreLineBotSDK.Enums.LineMessageType.Text)
+            {
+                var providers = await _factory.GetProvidersAsync(request);
+                var replyMessages = await providers.GetReplyMessagesAsync();
+                await _lineMessageUtility.ReplyMessageAsync(ev.replyToken, replyMessages);
+            }
         }
     }
 }
