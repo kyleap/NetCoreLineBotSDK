@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NetCoreLineBotSDK.Sample.Apps;
+using NetCoreLineBotSDK.Sample.Interfaces;
+using NetCoreLineBotSDK.Sample.Providers;
 
 namespace NetCoreLineBotSDK.Sample
 {
@@ -28,6 +31,10 @@ namespace NetCoreLineBotSDK.Sample
             services.AddControllers();
 
             services.AddLineBotSDK(Configuration);
+
+            services.AddTransient<IProviderFactory, ProviderFactory>();
+
+            services.AddTransient<LineBotSampleApp, LineBotSampleApp>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
