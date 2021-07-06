@@ -81,9 +81,32 @@ public class LineBotSampleApp : LineBotApp
 }
 ```
 
-## 完成第一個 Echo Bot
+## Demo
 
-![Echo Bot](https://cdn-images-1.medium.com/max/2000/1*B0DebLjQGDgAYdHG70Bkng.png))
+您可加入以下 Bot 並執行指令測試結果，原始碼請見 `NetCoreLineBotSDK.Sample` 
+
+![image](https://user-images.githubusercontent.com/8849818/124583387-906cd400-de85-11eb-907e-a61507fb6703.png)
+
+### Message Types
+
+Message Type 官方文件: https://developers.line.biz/en/docs/messaging-api/message-types/
+
+```
+/text
+/sticker
+/image
+/video
+/audio
+/location
+/image-map
+/image-map-with-video
+/template-buttons
+/template-confirm
+/template-carousel
+/template-carousel-images
+```
+
+## 
 
 
 # Line message Api 官方文件
