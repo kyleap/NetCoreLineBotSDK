@@ -17,6 +17,6 @@ namespace NetCoreLineBotSDK.Models.Message
         }
         public string Type => "image_carousel";
 
-        public List<ImageCarouselColumnAction> Columns { get; set; }
+        public List<ImageCarouselColumnAction> Columns { get; }
     }
 }

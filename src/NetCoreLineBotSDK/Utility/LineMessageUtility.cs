@@ -61,10 +61,7 @@ namespace NetCoreLineBotSDK.Utility
 
             foreach (var message in messages)
             {
-                req.Messages.Add(new TextMessage()
-                {
-                    Text = message
-                });
+                req.Messages.Add(new TextMessage(message));
             }
 
             var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings

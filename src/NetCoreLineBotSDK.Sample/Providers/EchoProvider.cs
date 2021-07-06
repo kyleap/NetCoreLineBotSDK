@@ -20,10 +20,7 @@ namespace NetCoreLineBotSDK.Sample.Providers
 
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var text = new TextMessage()
-            {
-                Text = @$"You Said: {_request.Message}"
-            };
+            var text = new TextMessage(@$"You Said: {_request.Message}");
 
             await Task.CompletedTask;
 

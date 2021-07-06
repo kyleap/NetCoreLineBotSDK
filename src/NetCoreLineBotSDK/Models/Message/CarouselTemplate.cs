@@ -14,6 +14,6 @@ namespace NetCoreLineBotSDK.Models.Message
 
         public string Type => "carousel";
 
-        public List<CarouselColumnMultipleAction> Columns { get; set; }
+        public List<CarouselColumnMultipleAction> Columns { get; }
     }
 }

@@ -13,13 +13,16 @@ namespace NetCoreLineBotSDK.Models.Message
         /// </summary>
         /// <param name="originalContentUrl">Image URL (Max character limit: 1000)</param>
         /// <param name="previewImageUrl">Preview image URL (Max character limit: 1000)</param>
-        public ImageMessage(string originalContentUrl, string previewImageUrl)
+        /// <param name="quickReply">Quick reply button objects. Max: 13 objects</param>
+        public ImageMessage(string originalContentUrl, string previewImageUrl, QuickReply quickReply = null)
         {
-            this.OriginalContentUrl = originalContentUrl;
-            this.PreviewImageUrl = previewImageUrl;
+            OriginalContentUrl = originalContentUrl;
+            PreviewImageUrl = previewImageUrl;
+            QuickReply = quickReply;
         }
         public LineMessageType Type => LineMessageType.Image;
-        public string OriginalContentUrl { get; set; }
-        public string PreviewImageUrl { get; set; }
+        public string OriginalContentUrl { get; }
+        public string PreviewImageUrl { get;  }
+        public QuickReply QuickReply { get; }
     }
 }

@@ -12,17 +12,21 @@ namespace NetCoreLineBotSDK.Models.Message
     public class StickerMessage : IMessage
     {
         /// <summary>
-        /// 
+        /// Sticker message
         /// </summary>
         /// <param name="packageId">Package ID for a set of stickers. For information on package IDs</param>
         /// <param name="stickerId">Sticker ID. For a list of sticker IDs for stickers that can be sent with the Messaging API</param>
-        public StickerMessage(int packageId, int stickerId)
+        /// <param name="quickReply">Quick reply button objects. Max: 13 objects</param>
+        public StickerMessage(int packageId, int stickerId, QuickReply quickReply = null)
         {
-            this.PackageId = packageId.ToString();
-            this.StickerId = stickerId.ToString();
+            PackageId = packageId.ToString();
+            StickerId = stickerId.ToString();
+            QuickReply = quickReply;
         }
         public LineMessageType Type => LineMessageType.Sticker;
-        public string PackageId { get; set; }
-        public string StickerId { get; set; }
+        public string PackageId { get; }
+        public string StickerId { get; }
+
+        public QuickReply QuickReply { get; }
     }
 }
