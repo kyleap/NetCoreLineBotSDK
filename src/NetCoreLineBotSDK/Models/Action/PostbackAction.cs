@@ -25,5 +25,7 @@ namespace NetCoreLineBotSDK.Models.Action
         public string Text { get; set; }
         public ActionType Type => ActionType.Postback;
         public string Label { get; set; }
+
+        public ActionArea area { get; set; }
     }
 }

@@ -7,11 +7,6 @@ namespace NetCoreLineBotSDK.Models.Message
 {
     public class CarouselTemplate : ITemplate
     {
-        public CarouselTemplate()
-        {
-
-        }
-
         public CarouselTemplate(List<CarouselColumnMultipleAction> columns)
         {
             Columns = columns;

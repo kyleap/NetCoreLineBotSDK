@@ -18,6 +18,8 @@ namespace NetCoreLineBotSDK.Models.Action
         public string Text { get; set; }
         public ActionType Type => ActionType.Message;
         public string Label { get; set; }
+
+        public ActionArea area { get; set; }
     }
 
 }
