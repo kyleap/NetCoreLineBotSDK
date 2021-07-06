@@ -24,7 +24,13 @@ namespace NetCoreLineBotSDK.Sample.Providers
             providers.Add("/video", new VideoMessageProviders(request));
             providers.Add("/audio", new AudioMessageProviders(request));
             providers.Add("/location", new LocationMessageProviders(request));
-
+            providers.Add("/image-map", new ImageMapMessageProviders(request));
+            providers.Add("/image-map-with-video", new ImageMapWithVideoMessageProviders(request));
+            providers.Add("/template-buttons", new TemplateButtonMessageProviders(request));
+            providers.Add("/template-confirm", new TemplateConfirmMessageProviders(request));
+            providers.Add("/template-carousel", new TemplateCarouselMessageProviders(request));
+            providers.Add("/template-carousel-images", new TemplateCarouselImageMessageProviders(request));
+            
 
             await Task.CompletedTask;
 

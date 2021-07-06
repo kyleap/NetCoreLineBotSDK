@@ -10,11 +10,19 @@ namespace NetCoreLineBotSDK.Models.Action
         public UriAction(string uri, string label)
         {
             Uri = uri;
+            LinkUri = uri;
             Label = label;
         }
         public string Uri { get; set; }
+
+        /// <summary>
+        /// Imagemap action objects 
+        /// </summary>
+        public string LinkUri { get; set; }
         public ActionType Type => ActionType.Uri;
         public string Label { get; set; }
+
+        public ActionArea area { get; set; }
     }
 
 }

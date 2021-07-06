@@ -1,4 +1,5 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
+using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -9,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class ImageMessageProviders : IReplyIntent
+    public class TemplateConfirmMessageProviders : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public ImageMessageProviders(MessageRequestDTO request)
+        public TemplateConfirmMessageProviders(MessageRequestDTO request)
         {
             _request = request;
         }
@@ -21,9 +22,8 @@ namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var msg = new ImageMessage(
-                originalContentUrl: "https://via.placeholder.com/1024x768/333.png/fff",
-                previewImageUrl: "https://via.placeholder.com/800x600/333.png/fff");
+            // tips: 您也可以傳入confirm的文字跟預期的actions
+            var msg = new ConfirmTemplate();
 
             await Task.CompletedTask;
 

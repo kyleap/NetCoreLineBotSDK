@@ -8,14 +8,21 @@ namespace NetCoreLineBotSDK.Models.Message
 {
     public class ConfirmTemplate : ITemplate
     {
-        public ConfirmTemplate(string text = "您確定嗎?")
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        public ConfirmTemplate(string text = "您確定嗎?", List<IAction> actions = null)
         {
             Text = text;
-            Actions = new List<IAction>()
+            if (actions == null)
             {
-                new MessageAction("Yes", "是"),
-                new MessageAction("No", "否")
-            };
+                Actions = new List<IAction>()
+                {
+                    new MessageAction("Yes", "是"),
+                    new MessageAction("No", "否")
+                };
+            }
         }
 
         public string Type => "confirm";

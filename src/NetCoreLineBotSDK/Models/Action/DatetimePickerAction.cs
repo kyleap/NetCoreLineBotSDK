@@ -12,6 +12,8 @@ namespace NetCoreLineBotSDK.Models.Action
         public string min { get; set; }
         public ActionType Type => ActionType.Datetimepicker;
         public string Label { get; set; }
+
+        public ActionArea area { get; set; }
     }
 
 }

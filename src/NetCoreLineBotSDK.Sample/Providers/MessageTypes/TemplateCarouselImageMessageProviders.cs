@@ -1,4 +1,5 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
+using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -9,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class ImageMessageProviders : IReplyIntent
+    public class TemplateCarouselImageMessageProviders : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public ImageMessageProviders(MessageRequestDTO request)
+        public TemplateCarouselImageMessageProviders(MessageRequestDTO request)
         {
             _request = request;
         }
@@ -21,9 +22,12 @@ namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var msg = new ImageMessage(
-                originalContentUrl: "https://via.placeholder.com/1024x768/333.png/fff",
-                previewImageUrl: "https://via.placeholder.com/800x600/333.png/fff");
+            var columns = new List<ImageCarouselColumnAction>();
+
+            columns.Add(new ImageCarouselColumnAction("https://via.placeholder.com/400x400/333.png/fff", new MessageAction("Image A")));
+            columns.Add(new ImageCarouselColumnAction("https://via.placeholder.com/400x400/333.png/fff", new MessageAction("Image B")));
+
+            var msg = new ImageCarouselTemplate(columns);
 
             await Task.CompletedTask;
 

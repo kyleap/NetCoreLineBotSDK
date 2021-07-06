@@ -13,6 +13,7 @@ namespace NetCoreLineBotSDK.Enums
         Text,
         Sticker,
         Image,
+        Imagemap,
         Video,
         Audio,
         Template,
