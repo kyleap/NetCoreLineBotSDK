@@ -16,6 +16,7 @@ namespace NetCoreLineBotSDK.Enums
         Datetimepicker,
         Camera,
         CameraRoll,
-        Location
+        Location,
+        Richmenuswitch
     }
 }

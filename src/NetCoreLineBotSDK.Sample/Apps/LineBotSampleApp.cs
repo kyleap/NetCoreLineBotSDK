@@ -43,5 +43,10 @@ namespace NetCoreLineBotSDK.Sample.Apps
                 await _lineMessageUtility.ReplyMessageAsync(ev.replyToken, replyMessages);
             }
         }
+
+        protected override Task OnPostbackAsync(LineEvent ev)
+        {
+            return base.OnPostbackAsync(ev);
+        }
     }
 }
