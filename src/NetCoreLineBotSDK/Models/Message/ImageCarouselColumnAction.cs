@@ -26,8 +26,8 @@ namespace NetCoreLineBotSDK.Models.Message
         public string ThumbnailImageUrl { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; }
         public ColumnDefaultaction DefaultAction { get; set; }
-        public IAction Action { get; set; }
+        public IAction Action { get; }
     }
 }

@@ -5,13 +5,12 @@ namespace NetCoreLineBotSDK.Models.Action
 {
     public class LocationAction : IAction
     {
-        public LocationAction(string _label)
+        public LocationAction(string label)
         {
-            Label = _label;
+            Label = label;
         }
         public ActionType Type => ActionType.Location;
-        public string Label { get; set; }
-
+        public string Label { get;}
         public ActionArea area { get; set; }
     }
 

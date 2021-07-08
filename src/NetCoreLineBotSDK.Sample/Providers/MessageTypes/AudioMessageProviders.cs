@@ -1,4 +1,5 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
+using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -22,7 +23,7 @@ namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
             var msg = new AudioMessage("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
-
+            
             await Task.CompletedTask;
 
             return new List<IRequestMessage>

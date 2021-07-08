@@ -10,8 +10,8 @@ namespace NetCoreLineBotSDK.Models.Message
     {
         public CarouselColumnMultipleAction(string text, List<IAction> actions)
         {
-            this.Text = text;
-            this.Actions = actions;
+            Text = text;
+            Actions = actions;
         }
         /// <summary>
         /// Max width: 1024px
@@ -22,8 +22,8 @@ namespace NetCoreLineBotSDK.Models.Message
         public ImageAspectRatioType ImageAspectRatio { get; set; } = ImageAspectRatioType.Rectangle;
         public ImageSizeType ImageSize { get; set; } = ImageSizeType.Cover;
         public string ImageBackgroundColor { get; set; } = "#000000";
-        public string Title { get; set; }
-        public string Text { get; set; }
+        public string Title { get; }
+        public string Text { get; }
         public ColumnDefaultaction DefaultAction { get; set; }
         public List<IAction> Actions { get; set; }
     }

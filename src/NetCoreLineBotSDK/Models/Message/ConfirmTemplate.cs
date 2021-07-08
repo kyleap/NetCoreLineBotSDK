@@ -27,8 +27,8 @@ namespace NetCoreLineBotSDK.Models.Message
 
         public string Type => "confirm";
 
-        public string Text { get; set; }
+        public string Text { get;}
 
-        public List<IAction> Actions { get; set; }
+        public List<IAction> Actions { get; }
     }
 }

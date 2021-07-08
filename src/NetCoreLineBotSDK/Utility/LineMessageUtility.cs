@@ -52,6 +52,17 @@ namespace NetCoreLineBotSDK.Utility
             return JsonConvert.DeserializeObject<UserProfile>(result);
         }
 
+        public async Task<Stream> GetContentBytesAsync(string messageId)
+        {
+            using var request = new HttpRequestMessage(new HttpMethod("GET"),
+                $"https://api-data.line.me/v2/bot/message/{messageId}/content");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            var response = await _httpClient.SendAsync(request);
+            var results = await response.Content.ReadAsStreamAsync();
+            return results;
+        }
+
+        #region Reply Message
         public async Task ReplyMessageAsync(string replyToken, params string[] messages)
         {
             using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageReplyApiBaseUrl}");
@@ -61,10 +72,7 @@ namespace NetCoreLineBotSDK.Utility
 
             foreach (var message in messages)
             {
-                req.Messages.Add(new TextMessage()
-                {
-                    Text = message
-                });
+                req.Messages.Add(new TextMessage(message));
             }
 
             var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings
@@ -103,26 +111,19 @@ namespace NetCoreLineBotSDK.Utility
                         break;
                 }
             }
-            await MakePostRequestToLineApi(req);
+            await MakeReplyRequestToLineApi(req);
         }
 
         public async Task ReplyMessageByJsonAsync(string replyToken, string jsonString)
         {
             var req = new LineMessageReq { ReplyToken = replyToken };
             req.Messages.Add(new FlexMessage(JsonConvert.DeserializeObject(jsonString)));
-            await MakePostRequestToLineApi(req);
+            await MakeReplyRequestToLineApi(req);
         }
+        
+        #endregion
 
-        public async Task<Stream> GetContentBytesAsync(string messageId)
-        {
-            using var request = new HttpRequestMessage(new HttpMethod("GET"),
-                $"https://api-data.line.me/v2/bot/message/{messageId}/content");
-            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
-            var response = await _httpClient.SendAsync(request);
-            var results = await response.Content.ReadAsStreamAsync();
-            return results;
-        }
-
+        #region Rich Menu
         public async Task<List<Richmenu>> GetRichMenuListAsync()
         {
             using var request =
@@ -137,7 +138,123 @@ namespace NetCoreLineBotSDK.Utility
             return richMenuRes.richmenus;
         }
 
-        public async Task<Richmenu> CreateRichMenuAsync(RichmenuDetail richmenuDetail)
+        public async Task<Richmenu> CreateRichMenuWithImageAsync(RichmenuDetail richmenuDetail, string imgUrl, string alias = "")
+        {
+            using var createRequest = new HttpRequestMessage(new HttpMethod("POST"), LineMessageRichMenuApiBaseUrl);
+            createRequest.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+
+            var postJson = JsonConvert.SerializeObject(richmenuDetail, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            });
+
+            createRequest.Content = new StringContent(postJson);
+            createRequest.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            var createResponse = await _httpClient.SendAsync(createRequest);
+            var createContent = await createResponse.Content.ReadAsStringAsync();
+            if (createResponse.StatusCode != HttpStatusCode.OK) throw new Exception(createContent);
+
+            var richmenuRes = JsonConvert.DeserializeObject<Richmenu>(createContent);
+
+            using var uploadRequest = new HttpRequestMessage(new HttpMethod("POST"),
+                $"{LineMessageRichMenuAttachApiBaseUrl}/{richmenuRes.richMenuId}/content");
+            uploadRequest.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            var imgBytes = GetImage(imgUrl);
+            uploadRequest.Content = new ByteArrayContent(imgBytes);
+            uploadRequest.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+            var uploadResponse = await _httpClient.SendAsync(uploadRequest);
+            var uploadContent = await uploadResponse.Content.ReadAsStringAsync();
+
+            if (uploadResponse.StatusCode != HttpStatusCode.OK)
+            {
+                await DeleteRichMenu(richmenuRes.richMenuId);
+                throw new Exception(uploadContent);
+            }
+	
+            if(!string.IsNullOrEmpty(alias))
+            {
+                await CreateRichMenuAliasAsync(richmenuRes.richMenuId,alias);
+            }
+
+            return richmenuRes;
+        }
+        
+        public async Task<Richmenu> CreateRichMenuByJsonWithImageAsync(string json, string imgUrl, string alias = "")
+        {
+            using var createRequest = new HttpRequestMessage(new HttpMethod("POST"), LineMessageRichMenuApiBaseUrl);
+            createRequest.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+
+            createRequest.Content = new StringContent(json);
+            createRequest.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            var createResponse = await _httpClient.SendAsync(createRequest);
+            var createContent = await createResponse.Content.ReadAsStringAsync();
+            if (createResponse.StatusCode != HttpStatusCode.OK) throw new Exception(createContent);
+
+            var richmenuRes = JsonConvert.DeserializeObject<Richmenu>(createContent);
+
+            using var uploadRequest = new HttpRequestMessage(new HttpMethod("POST"),
+                $"{LineMessageRichMenuAttachApiBaseUrl}/{richmenuRes.richMenuId}/content");
+            uploadRequest.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            var imgBytes = GetImage(imgUrl);
+            uploadRequest.Content = new ByteArrayContent(imgBytes);
+            uploadRequest.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+            var uploadResponse = await _httpClient.SendAsync(uploadRequest);
+            var uploadContent = await uploadResponse.Content.ReadAsStringAsync();
+
+            if (uploadResponse.StatusCode != HttpStatusCode.OK)
+            {
+                await DeleteRichMenu(richmenuRes.richMenuId);
+                throw new Exception(uploadContent);
+            }
+	
+            if(!string.IsNullOrEmpty(alias))
+            {
+                await CreateRichMenuAliasAsync(richmenuRes.richMenuId,alias);
+            }
+
+            return richmenuRes;
+        }
+        
+        public async Task SetDefaultRichMenuAsync(string richMenuId)
+        {
+            using var request = new HttpRequestMessage(new HttpMethod("POST"),
+                $"{LineMessageRichMenuAllUserApiBaseUrl}/{richMenuId}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            var response = await _httpClient.SendAsync(request);
+            var results = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                await DeleteRichMenu(richMenuId);
+            }
+        }
+
+        public async Task DeleteRichMenu(string richMenuId)
+        {
+            using var request = new HttpRequestMessage(new HttpMethod("DELETE"),
+                $"{LineMessageRichMenuApiBaseUrl}/{richMenuId}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            var response = await _httpClient.SendAsync(request);
+        }
+
+        public async Task LinkRichMenuToUser(string userId, string richMenuId)
+        {
+            using var request = new HttpRequestMessage(new HttpMethod("POST"),
+                $"{LineMessageUserBaseUrl}/{userId}/richmenu/{richMenuId}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            var response = await _httpClient.SendAsync(request);
+            var results = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                await DeleteRichMenu(richMenuId);
+                throw new Exception("upload rich menu image failed");
+            }
+        }
+
+        private async Task<Richmenu> CreateRichMenuAsync(RichmenuDetail richmenuDetail)
         {
             using var request = new HttpRequestMessage(new HttpMethod("POST"), LineMessageRichMenuApiBaseUrl);
             request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
@@ -159,20 +276,7 @@ namespace NetCoreLineBotSDK.Utility
             return richmenuRes;
         }
 
-        public async Task SetDefaultRichMenuAsync(string richMenuId)
-        {
-            using var request = new HttpRequestMessage(new HttpMethod("POST"),
-                $"{LineMessageRichMenuAllUserApiBaseUrl}/{richMenuId}");
-            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
-            var response = await _httpClient.SendAsync(request);
-            var results = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                await DeleteRichMenu(richMenuId);
-            }
-        }
-
-        public async Task UploadRichMenuImage(string imgUrl, string richMenuId)
+        private async Task UploadRichMenuImage(string imgUrl, string richMenuId)
         {
             using var request = new HttpRequestMessage(new HttpMethod("POST"),
                 $"{LineMessageRichMenuAttachApiBaseUrl}/{richMenuId}/content");
@@ -188,19 +292,92 @@ namespace NetCoreLineBotSDK.Utility
                 await DeleteRichMenu(richMenuId);
             }
         }
+        
+        #endregion
 
-        public async Task DeleteRichMenu(string richMenuId)
+        #region Rich Menu Alias
+
+        public async Task<List<RichMenuAlias>> GetRichMenuAliasAsync()
+        {
+            using var request =
+                new HttpRequestMessage(new HttpMethod("GET"), $"{LineMessageRichMenuApiBaseUrl}/alias/list");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+
+            var response = await _httpClient.SendAsync(request);
+            var result = await response.Content.ReadAsStringAsync();
+            var alias = JsonConvert.DeserializeObject<RichMenuAliasResponse>(result);
+            if (alias == null) return new List<RichMenuAlias>();
+            return alias.aliases;
+        }
+        
+        public async Task CreateRichMenuAliasAsync(string richMenuId, string aliasName)
+        {
+            using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageRichMenuApiBaseUrl}/alias");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+
+            var obj = new {
+                richMenuAliasId = aliasName,
+                richMenuId = richMenuId
+            };
+
+            var postJson = JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            });
+
+            request.Content = new StringContent(postJson);
+            request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            var response = await _httpClient.SendAsync(request);
+            var results = await response.Content.ReadAsStringAsync();
+            if(response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception(results);
+            }
+        }
+        
+        public async Task DeleteRichMenAliasAsync(string aliasName)
         {
             using var request = new HttpRequestMessage(new HttpMethod("DELETE"),
-                $"{LineMessageRichMenuApiBaseUrl}/{richMenuId}");
+                $"{LineMessageRichMenuApiBaseUrl}/alias/{aliasName}");
             request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
             var response = await _httpClient.SendAsync(request);
         }
 
+        public async Task UpdateRichMenAliasAsync(string richMenuId, string aliasName)
+        {
+            using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageRichMenuApiBaseUrl}/alias/{aliasName}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+
+            var obj = new {
+                richMenuId = richMenuId
+            };
+	
+            var postJson = JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            });
+
+            request.Content = new StringContent(postJson);
+            request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            var response = await _httpClient.SendAsync(request);
+            var results = await response.Content.ReadAsStringAsync();
+            if(response.StatusCode != HttpStatusCode.OK) throw new Exception(results);
+        }
+
+        #endregion
+
         private byte[] GetImage(string url)
         {
-            var request = (HttpWebRequest) WebRequest.Create(url);
-            var response = (HttpWebResponse) request.GetResponse();
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            var response = (HttpWebResponse)request.GetResponse();
 
             using var dataStream = response.GetResponseStream();
             using var sr = new BinaryReader(dataStream);
@@ -208,26 +385,8 @@ namespace NetCoreLineBotSDK.Utility
 
             return bytes;
         }
-
-        public async Task LinkRichMenuToUser(string userId, string richMenuId)
-        {
-            using var request = new HttpRequestMessage(new HttpMethod("POST"),
-                $"{LineMessageUserBaseUrl}/{userId}/richmenu/{richMenuId}");
-            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
-            var response = await _httpClient.SendAsync(request);
-            var results = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                await DeleteRichMenu(richMenuId);
-                throw new Exception("upload rich menu image failed");
-            }
-        }
-        public string GetAccountLinkUrl()
-        {
-            return  $"{_accountLinkUrl}";
-        }
-
-        private async Task MakePostRequestToLineApi(LineMessageReq req)
+        
+        private async Task MakeReplyRequestToLineApi(LineMessageReq req)
         {
             var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings
             {

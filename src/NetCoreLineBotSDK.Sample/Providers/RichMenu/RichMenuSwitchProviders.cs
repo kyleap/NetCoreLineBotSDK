@@ -1,4 +1,5 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
+using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -7,26 +8,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NetCoreLineBotSDK.Sample.Providers
+namespace NetCoreLineBotSDK.Sample.Providers.RichMenu
 {
-    public class EchoProvider : IReplyIntent
+    public class RichMenuSwitchProviders : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public EchoProvider(MessageRequestDTO request)
+        public RichMenuSwitchProviders(MessageRequestDTO request)
         {
             _request = request;
         }
 
+
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var text = new TextMessage(@$"You Said: {_request.Message}");
+            var msg = new ButtonTemplate("Rich Menus", new List<IAction>()
+            {
+                new RichMenuSwitchAction("richmenu-a", "richmenu-a-postback"),
+                new RichMenuSwitchAction("richmenu-b", "richmenu-b-postback"),
+                new RichMenuSwitchAction("richmenu-c", "richmenu-c-postback")
+            });
+
 
             await Task.CompletedTask;
 
             return new List<IRequestMessage>
             {
-                text
+                msg
             };
         }
 

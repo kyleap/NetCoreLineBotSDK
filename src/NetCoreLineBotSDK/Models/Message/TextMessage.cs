@@ -11,27 +11,21 @@ namespace NetCoreLineBotSDK.Models.Message
 {
     public class TextMessage : IMessage
     {
-        public TextMessage()
-        {
-
-        }
-
         /// <summary>
         /// Message text. You can include the following emoji
-        /// e.g \uDBC0\uDC84 LINE original emoji
-        /// https://developers.line.biz/media/messaging-api/emoji-list.pdf
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="quickReply"></param>
+        /// <param name="text">Message text</param>
+        /// <param name="quickReply">Quick reply button objects. Max: 13 objects</param>
         public TextMessage(string text, QuickReply quickReply = null)
         {
             this.Text = text;
             this.QuickReply = quickReply;
         }
-        public string Text { get; set; }
-
+        
         public LineMessageType Type => LineMessageType.Text;
 
-        public QuickReply QuickReply { get; set; }
+        public string Text { get; }
+
+        public QuickReply QuickReply { get; }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NetCoreLineBotSDK.Sample.Providers.RichMenu;
 
 namespace NetCoreLineBotSDK.Sample.Providers
 {
@@ -31,6 +32,8 @@ namespace NetCoreLineBotSDK.Sample.Providers
             providers.Add("/template-carousel", new TemplateCarouselMessageProviders(request));
             providers.Add("/template-carousel-images", new TemplateCarouselImageMessageProviders(request));
             
+            // Rich Menu
+            providers.Add("/richmenu-switch", new RichMenuSwitchProviders(request));
 
             await Task.CompletedTask;
 
