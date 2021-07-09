@@ -6,7 +6,7 @@ using NetCoreLineBotSDK.Interfaces;
 
 namespace NetCoreLineBotSDK.Models.Message
 {
-    public class ImageMessage : IMessage
+    public class ImageMessage : BaseMessage, IMessage
     {
         /// <summary>
         /// Image Message
@@ -14,15 +14,14 @@ namespace NetCoreLineBotSDK.Models.Message
         /// <param name="originalContentUrl">Image URL (Max character limit: 1000)</param>
         /// <param name="previewImageUrl">Preview image URL (Max character limit: 1000)</param>
         /// <param name="quickReply">Quick reply button objects. Max: 13 objects</param>
-        public ImageMessage(string originalContentUrl, string previewImageUrl, QuickReply quickReply = null)
+        public ImageMessage(string originalContentUrl, string previewImageUrl)
         {
             OriginalContentUrl = originalContentUrl;
             PreviewImageUrl = previewImageUrl;
-            QuickReply = quickReply;
         }
+
         public LineMessageType Type => LineMessageType.Image;
         public string OriginalContentUrl { get; }
-        public string PreviewImageUrl { get;  }
-        public QuickReply QuickReply { get; }
+        public string PreviewImageUrl { get; }
     }
 }

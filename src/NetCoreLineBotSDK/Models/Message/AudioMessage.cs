@@ -6,7 +6,7 @@ using NetCoreLineBotSDK.Interfaces;
 
 namespace NetCoreLineBotSDK.Models.Message
 {
-    public class AudioMessage : IMessage
+    public class AudioMessage :BaseMessage, IMessage
     {
         /// <summary>
         /// Audio message
@@ -14,17 +14,14 @@ namespace NetCoreLineBotSDK.Models.Message
         /// <param name="originalContentUrl">URL of audio file (Max character limit: 1000)</param>
         /// <param name="duration">URL of audio file (Max character limit: 1000)</param>
         /// <param name="quickReply">Quick reply button objects. Max: 13 objects</param>
-        public AudioMessage(string originalContentUrl, int duration = 60000, QuickReply quickReply = null)
+        public AudioMessage(string originalContentUrl, int duration = 60000)
         {
             this.OriginalContentUrl = originalContentUrl;
-            this.QuickReply = quickReply;
             Duration = duration;
         }
 
         public LineMessageType Type => LineMessageType.Audio;
         public string OriginalContentUrl { get;}
         public int Duration { get;}
-
-        public QuickReply QuickReply { get; }
     }
 }

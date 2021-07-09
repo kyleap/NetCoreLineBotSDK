@@ -1,4 +1,5 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
+using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -9,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class StickerMessageProviders : IReplyIntent
+    public class TemplateCarouselImageMessageProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public StickerMessageProviders(MessageRequestDTO request)
+        public TemplateCarouselImageMessageProvider(MessageRequestDTO request)
         {
             _request = request;
         }
@@ -21,8 +22,12 @@ namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            // Api reference: https://developers.line.biz/media/messaging-api/sticker_list.pdf
-            var msg = new StickerMessage(446,1988);
+            var columns = new List<ImageCarouselColumnAction>();
+
+            columns.Add(new ImageCarouselColumnAction("https://via.placeholder.com/400x400/333.png/fff", new MessageAction("Image A")));
+            columns.Add(new ImageCarouselColumnAction("https://via.placeholder.com/400x400/333.png/fff", new MessageAction("Image B")));
+
+            var msg = new ImageCarouselTemplate(columns);
 
             await Task.CompletedTask;
 

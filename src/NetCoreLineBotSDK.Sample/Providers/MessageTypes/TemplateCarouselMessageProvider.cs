@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class TemplateCarouselMessageProviders : IReplyIntent
+    public class TemplateCarouselMessageProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public TemplateCarouselMessageProviders(MessageRequestDTO request)
+        public TemplateCarouselMessageProvider(MessageRequestDTO request)
         {
             _request = request;
         }

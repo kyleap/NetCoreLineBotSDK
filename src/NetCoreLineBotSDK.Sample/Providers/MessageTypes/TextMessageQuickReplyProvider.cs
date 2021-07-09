@@ -1,5 +1,4 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
-using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -7,27 +6,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NetCoreLineBotSDK.Models.Action;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class TemplateCarouselImageMessageProviders : IReplyIntent
+    public class TextMessageQuickReplyProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public TemplateCarouselImageMessageProviders(MessageRequestDTO request)
+        public TextMessageQuickReplyProvider(MessageRequestDTO request)
         {
             _request = request;
         }
-
-
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var columns = new List<ImageCarouselColumnAction>();
+            var msg = new TextMessage(@$"您可以在任何Message Types回傳Quick Reply");
 
-            columns.Add(new ImageCarouselColumnAction("https://via.placeholder.com/400x400/333.png/fff", new MessageAction("Image A")));
-            columns.Add(new ImageCarouselColumnAction("https://via.placeholder.com/400x400/333.png/fff", new MessageAction("Image B")));
-
-            var msg = new ImageCarouselTemplate(columns);
+            msg.QuickReply = new QuickReply()
+            {
+                Items = new List<QuickReplyItem>()
+                {
+                    new QuickReplyItem()
+                    {
+                        action = new MessageAction(@$"Hello, Quick Reply")
+                    }
+                }
+            };
 
             await Task.CompletedTask;
 

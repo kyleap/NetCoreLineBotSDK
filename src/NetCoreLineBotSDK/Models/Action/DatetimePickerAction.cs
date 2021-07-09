@@ -5,14 +5,24 @@ namespace NetCoreLineBotSDK.Models.Action
 {
     public class DatetimePickerAction : IAction
     {
-        public string data { get; set; }
-        public string mode { get; set; }
-        public string initial { get; set; }
-        public string max { get; set; }
-        public string min { get; set; }
-        public ActionType Type => ActionType.Datetimepicker;
-        public string Label { get; set; }
-        public ActionArea area { get; set; }
-    }
+        public DatetimePickerAction(string label, string data, DatetimeActionModel mode)
+        {
+            Label = label;
+            Data = data;
+            Mode = mode;
+        }
 
+        public string Label { get; }
+        public string Data { get; }
+        public DatetimeActionModel Mode { get; }
+        
+        public string Initial { get; set; }
+        
+        public string Max { get; set; }
+        
+        public string Min { get; set; }
+        public ActionType Type => ActionType.Datetimepicker;
+        
+        public ActionArea Area { get; set; }
+    }
 }

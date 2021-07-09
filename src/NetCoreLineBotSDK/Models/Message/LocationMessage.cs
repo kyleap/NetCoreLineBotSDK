@@ -6,7 +6,7 @@ using NetCoreLineBotSDK.Interfaces;
 
 namespace NetCoreLineBotSDK.Models.Message
 {
-    public class LocationMessage : IMessage
+    public class LocationMessage : BaseMessage, IMessage
     {
         /// <summary>
         /// Location Message
@@ -16,13 +16,12 @@ namespace NetCoreLineBotSDK.Models.Message
         /// <param name="latitude">latitude</param>
         /// <param name="longitude">longitude</param>
         /// <param name="quickReply">Quick reply button objects. Max: 13 objects</param>
-        public LocationMessage(string title, string address, decimal latitude, decimal longitude, QuickReply quickReply = null)
+        public LocationMessage(string title, string address, decimal latitude, decimal longitude)
         {
             Title = title;
             Address = address;
             Latitude = latitude;
             Longitude = longitude;
-            QuickReply = quickReply;
         }
 
         public LineMessageType Type => LineMessageType.Location;
@@ -30,6 +29,5 @@ namespace NetCoreLineBotSDK.Models.Message
         public string Address { get;}
         public decimal Latitude { get;}
         public decimal Longitude { get;}
-        public QuickReply QuickReply { get;}
     }
 }

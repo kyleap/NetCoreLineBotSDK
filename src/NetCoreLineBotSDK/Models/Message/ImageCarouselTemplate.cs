@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using NetCoreLineBotSDK.Interfaces;
+using NetCoreLineBotSDK.Models.Action;
 
 namespace NetCoreLineBotSDK.Models.Message
 {
-    public class ImageCarouselTemplate : ITemplate
+    public class ImageCarouselTemplate : BaseMessage, ITemplate
     {
         /// <summary>
         /// Image Carousel Template

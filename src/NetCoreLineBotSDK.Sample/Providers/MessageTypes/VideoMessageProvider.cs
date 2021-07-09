@@ -1,5 +1,4 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
-using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -10,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class TemplateConfirmMessageProviders : IReplyIntent
+    public class VideoMessageProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public TemplateConfirmMessageProviders(MessageRequestDTO request)
+        public VideoMessageProvider(MessageRequestDTO request)
         {
             _request = request;
         }
 
-
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            // tips: 您也可以傳入confirm的文字跟預期的actions
-            var msg = new ConfirmTemplate();
+            var msg = new VideoMessage(
+                originalContentUrl: "https://i.imgur.com/n8QsXTk.mp4",
+                previewImageUrl: "https://i.imgur.com/oLvTjtu.png");
 
             await Task.CompletedTask;
 

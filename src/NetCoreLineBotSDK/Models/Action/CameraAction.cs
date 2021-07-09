@@ -11,7 +11,8 @@ namespace NetCoreLineBotSDK.Models.Action
         }
         public ActionType Type => ActionType.Camera;
         public string Label { get;}
-        public ActionArea area { get; set; }
+        
+        public ActionArea Area { get; set; }
     }
 
 }

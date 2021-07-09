@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class ImageMapMessageProviders : IReplyIntent
+    public class ImageMapMessageProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public ImageMapMessageProviders(MessageRequestDTO request)
+        public ImageMapMessageProvider(MessageRequestDTO request)
         {
             _request = request;
         }

@@ -1,5 +1,4 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
-using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -7,14 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NetCoreLineBotSDK.Models.Action;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class TemplateButtonMessageProviders : IReplyIntent
+    public class TextMessageSenderProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public TemplateButtonMessageProviders(MessageRequestDTO request)
+        public TextMessageSenderProvider(MessageRequestDTO request)
         {
             _request = request;
         }
@@ -22,12 +22,13 @@ namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var msg = new ButtonTemplate("Buttons", new List<IAction>()
+            var msg = new TextMessage(@$"改變發送者跟大頭貼");
+                
+            msg.Sender = new MessageSender()
             {
-                new MessageAction("Buttion1"),
-                new MessageAction("Buttion2")
-            }, thumbnailImageUrl: "https://via.placeholder.com/200x150/333.png/fff");
-
+                Name = "熊大",
+                IconUrl =  "https://i.imgur.com/f3kvAba.png"
+            };
 
             await Task.CompletedTask;
 
