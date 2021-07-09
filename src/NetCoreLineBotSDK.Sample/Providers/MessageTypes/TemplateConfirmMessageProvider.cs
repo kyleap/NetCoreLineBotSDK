@@ -1,4 +1,5 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
+using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -9,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class LocationMessageProviders : IReplyIntent
+    public class TemplateConfirmMessageProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public LocationMessageProviders(MessageRequestDTO request)
+        public TemplateConfirmMessageProvider(MessageRequestDTO request)
         {
             _request = request;
         }
@@ -21,12 +22,8 @@ namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var msg = new LocationMessage(
-                title: "臺北101",
-                address: "北市信義區信義路五段7號",
-                Convert.ToDecimal(25.0338041),
-                Convert.ToDecimal(121.5645561)
-                );
+            // tips: 您也可以傳入confirm的文字跟預期的actions
+            var msg = new ConfirmTemplate();
 
             await Task.CompletedTask;
 

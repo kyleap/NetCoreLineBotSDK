@@ -10,8 +10,9 @@ namespace NetCoreLineBotSDK.Models.Action
             Label = label;
         }
         public ActionType Type => ActionType.CameraRoll;
-        public string Label { get; set; }
-        public ActionArea area { get; set; }
+        public string Label { get; }
+        
+        public ActionArea Area { get; set; }
     }
 
 }

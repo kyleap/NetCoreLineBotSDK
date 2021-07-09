@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class TextMessageProviders : IReplyIntent
+    public class LocationMessageProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public TextMessageProviders(MessageRequestDTO request)
+        public LocationMessageProvider(MessageRequestDTO request)
         {
             _request = request;
         }
@@ -21,7 +21,12 @@ namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var msg = new TextMessage(@$"Hello, world");
+            var msg = new LocationMessage(
+                title: "臺北101",
+                address: "北市信義區信義路五段7號",
+                Convert.ToDecimal(25.0338041),
+                Convert.ToDecimal(121.5645561)
+                );
 
             await Task.CompletedTask;
 

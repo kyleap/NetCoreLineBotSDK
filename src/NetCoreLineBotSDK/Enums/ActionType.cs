@@ -7,7 +7,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace NetCoreLineBotSDK.Enums
 {
-    [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
+    [JsonConverter(typeof(StringEnumConverter), true)]
     public enum ActionType
     {
         Postback,

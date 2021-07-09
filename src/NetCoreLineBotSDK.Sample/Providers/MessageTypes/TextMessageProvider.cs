@@ -6,24 +6,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NetCoreLineBotSDK.Models.Action;
 
 namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
 {
-    public class VideoMessageProviders : IReplyIntent
+    public class TextMessageProvider : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
 
-        public VideoMessageProviders(MessageRequestDTO request)
+        public TextMessageProvider(MessageRequestDTO request)
         {
             _request = request;
         }
-
-
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var msg = new VideoMessage(
-                originalContentUrl: "https://i.imgur.com/n8QsXTk.mp4",
-                previewImageUrl: "https://i.imgur.com/oLvTjtu.png");
+            var msg = new TextMessage(@$"Hello, world");
 
             await Task.CompletedTask;
 

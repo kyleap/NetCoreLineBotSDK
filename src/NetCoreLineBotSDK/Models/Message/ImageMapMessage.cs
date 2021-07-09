@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NetCoreLineBotSDK.Models.Message
 {
-    public class ImageMapMessage : IMessage
+    public class ImageMapMessage : BaseMessage, IMessage
     {
         /// <summary>
         /// Image Map Message
@@ -21,7 +21,7 @@ namespace NetCoreLineBotSDK.Models.Message
         /// <param name="altText">Alternative text (Max character limit: 400)</param>
         /// <param name="video">videos</param>
         /// <param name="quickReply">Quick reply button objects. Max: 13 objects</param>
-        public ImageMapMessage(string imageUrl, int imageWidth, int imageHeigth, List<IAction> actions, string altText = "image map", ImageMapVideo video = null, QuickReply quickReply = null)
+        public ImageMapMessage(string imageUrl, int imageWidth, int imageHeigth, List<IAction> actions, string altText = "image map", ImageMapVideo video = null)
         {
             BaseUrl = imageUrl;
             Actions = actions;
@@ -40,7 +40,6 @@ namespace NetCoreLineBotSDK.Models.Message
         public Basesize BaseSize { get; }
         public List<IAction> Actions { get; }
         public ImageMapVideo Video { get; }
-        public QuickReply QuickReply { get; }
     }
 
     public class Basesize

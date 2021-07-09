@@ -12,6 +12,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using NetCoreLineBotSDK.Models.LineObject;
+using NetCoreLineBotSDK.Serialization;
 using Newtonsoft.Json.Converters;
 
 namespace NetCoreLineBotSDK.Utility
@@ -22,6 +24,7 @@ namespace NetCoreLineBotSDK.Utility
         private readonly string _accountLinkUrl;
         private readonly HttpClient _httpClient;
         private const string LineMessageUserBaseUrl = "https://api.line.me/v2/bot/user/";
+        private const string LineMessagePushApiBaseUrl = "https://api.line.me/v2/bot/message/push";
         private const string LineMessageReplyApiBaseUrl = "https://api.line.me/v2/bot/message/reply";
         private const string LineMessageProfileApiBaseUrl = "https://api.line.me/v2/bot/profile";
         private const string LineMessageRichMenuApiBaseUrl = "https://api.line.me/v2/bot/richmenu";
@@ -32,7 +35,6 @@ namespace NetCoreLineBotSDK.Utility
         public LineMessageUtility(IOptions<LineSetting> lineSetting, HttpClient httpClient)
         {
             _accessToken = lineSetting.Value.ChannelAccessToken;
-            _accountLinkUrl = lineSetting.Value.AccountLinkUrl;
             _httpClient = httpClient;
         }
 
@@ -62,7 +64,56 @@ namespace NetCoreLineBotSDK.Utility
             return results;
         }
 
+        #region Push Message
+        public async Task PushMessageAsync(string userId, params string[] messages)
+        {
+            var req = new LineMessagePushReq {To = userId};
+
+            foreach (var message in messages)
+            {
+                req.Messages.Add(new TextMessage(message));
+            }
+
+            await MakePushRequestToLineApi(req);
+        }
+
+        public async Task PushMessageAsync(string userId, IList<IRequestMessage> messages)
+        {
+            var req = new LineMessagePushReq() {To = userId};
+
+            foreach (var message in messages)
+            {
+                switch (message)
+                {
+                    case IMessage:
+                        req.Messages.Add(message);
+                        break;
+                    case ITemplate template:
+                        req.Messages.Add(new TemplateMessageBase()
+                        {
+                            Template = template
+                        });
+                        break;
+                    case IFlex template:
+                        req.Messages.Add(template);
+                        break;
+                }
+            }
+
+            await MakePushRequestToLineApi(req);
+        }
+
+        public async Task PushMessageByJsonAsync(string userId, string jsonString)
+        {
+            var req = new LineMessagePushReq() {To = userId};
+            req.Messages.Add(new FlexMessage(jsonString));
+            await MakePushRequestToLineApi(req);
+        }
+
+        #endregion
+        
         #region Reply Message
+
         public async Task ReplyMessageAsync(string replyToken, params string[] messages)
         {
             using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageReplyApiBaseUrl}");
@@ -111,19 +162,34 @@ namespace NetCoreLineBotSDK.Utility
                         break;
                 }
             }
+
             await MakeReplyRequestToLineApi(req);
         }
 
         public async Task ReplyMessageByJsonAsync(string replyToken, string jsonString)
         {
-            var req = new LineMessageReq { ReplyToken = replyToken };
-            req.Messages.Add(new FlexMessage(JsonConvert.DeserializeObject(jsonString)));
+            var req = new LineMessageReq {ReplyToken = replyToken};
+            req.Messages.Add(new FlexMessage(jsonString));
             await MakeReplyRequestToLineApi(req);
         }
-        
+
         #endregion
 
         #region Rich Menu
+
+        public async Task<Richmenu> GetRichMenuAsync(string richMenuId)
+        {
+            using var request =
+                new HttpRequestMessage(new HttpMethod("GET"), $"{LineMessageRichMenuApiBaseUrl}/{richMenuId}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+
+            var response = await _httpClient.SendAsync(request);
+            var result = await response.Content.ReadAsStringAsync();
+            var richMenuRes = JsonConvert.DeserializeObject<Richmenu>(result);
+            if (richMenuRes == null) return new Richmenu();
+            return richMenuRes;
+        }
+
         public async Task<List<Richmenu>> GetRichMenuListAsync()
         {
             using var request =
@@ -138,7 +204,8 @@ namespace NetCoreLineBotSDK.Utility
             return richMenuRes.richmenus;
         }
 
-        public async Task<Richmenu> CreateRichMenuWithImageAsync(RichmenuDetail richmenuDetail, string imgUrl, string alias = "")
+        public async Task<Richmenu> CreateRichMenuWithImageAsync(RichmenuDetail richmenuDetail, string imgUrl,
+            string alias = "")
         {
             using var createRequest = new HttpRequestMessage(new HttpMethod("POST"), LineMessageRichMenuApiBaseUrl);
             createRequest.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
@@ -174,15 +241,15 @@ namespace NetCoreLineBotSDK.Utility
                 await DeleteRichMenu(richmenuRes.richMenuId);
                 throw new Exception(uploadContent);
             }
-	
-            if(!string.IsNullOrEmpty(alias))
+
+            if (!string.IsNullOrEmpty(alias))
             {
-                await CreateRichMenuAliasAsync(richmenuRes.richMenuId,alias);
+                await CreateRichMenuAliasAsync(richmenuRes.richMenuId, alias);
             }
 
             return richmenuRes;
         }
-        
+
         public async Task<Richmenu> CreateRichMenuByJsonWithImageAsync(string json, string imgUrl, string alias = "")
         {
             using var createRequest = new HttpRequestMessage(new HttpMethod("POST"), LineMessageRichMenuApiBaseUrl);
@@ -210,15 +277,15 @@ namespace NetCoreLineBotSDK.Utility
                 await DeleteRichMenu(richmenuRes.richMenuId);
                 throw new Exception(uploadContent);
             }
-	
-            if(!string.IsNullOrEmpty(alias))
+
+            if (!string.IsNullOrEmpty(alias))
             {
-                await CreateRichMenuAliasAsync(richmenuRes.richMenuId,alias);
+                await CreateRichMenuAliasAsync(richmenuRes.richMenuId, alias);
             }
 
             return richmenuRes;
         }
-        
+
         public async Task SetDefaultRichMenuAsync(string richMenuId)
         {
             using var request = new HttpRequestMessage(new HttpMethod("POST"),
@@ -252,6 +319,14 @@ namespace NetCoreLineBotSDK.Utility
                 await DeleteRichMenu(richMenuId);
                 throw new Exception("upload rich menu image failed");
             }
+        }
+
+        public async Task UnLinkRichMenuToUser(string userId)
+        {
+            using var request = new HttpRequestMessage(new HttpMethod("DELETE"),
+                $"{LineMessageUserBaseUrl}/{userId}/richmenu");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            var response = await _httpClient.SendAsync(request);
         }
 
         private async Task<Richmenu> CreateRichMenuAsync(RichmenuDetail richmenuDetail)
@@ -292,7 +367,7 @@ namespace NetCoreLineBotSDK.Utility
                 await DeleteRichMenu(richMenuId);
             }
         }
-        
+
         #endregion
 
         #region Rich Menu Alias
@@ -309,13 +384,15 @@ namespace NetCoreLineBotSDK.Utility
             if (alias == null) return new List<RichMenuAlias>();
             return alias.aliases;
         }
-        
+
         public async Task CreateRichMenuAliasAsync(string richMenuId, string aliasName)
         {
-            using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageRichMenuApiBaseUrl}/alias");
+            using var request =
+                new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageRichMenuApiBaseUrl}/alias");
             request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
 
-            var obj = new {
+            var obj = new
+            {
                 richMenuAliasId = aliasName,
                 richMenuId = richMenuId
             };
@@ -333,12 +410,12 @@ namespace NetCoreLineBotSDK.Utility
             request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
             var response = await _httpClient.SendAsync(request);
             var results = await response.Content.ReadAsStringAsync();
-            if(response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception(results);
             }
         }
-        
+
         public async Task DeleteRichMenAliasAsync(string aliasName)
         {
             using var request = new HttpRequestMessage(new HttpMethod("DELETE"),
@@ -349,13 +426,15 @@ namespace NetCoreLineBotSDK.Utility
 
         public async Task UpdateRichMenAliasAsync(string richMenuId, string aliasName)
         {
-            using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageRichMenuApiBaseUrl}/alias/{aliasName}");
+            using var request = new HttpRequestMessage(new HttpMethod("POST"),
+                $"{LineMessageRichMenuApiBaseUrl}/alias/{aliasName}");
             request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
 
-            var obj = new {
+            var obj = new
+            {
                 richMenuId = richMenuId
             };
-	
+
             var postJson = JsonConvert.SerializeObject(obj, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -369,15 +448,15 @@ namespace NetCoreLineBotSDK.Utility
             request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
             var response = await _httpClient.SendAsync(request);
             var results = await response.Content.ReadAsStringAsync();
-            if(response.StatusCode != HttpStatusCode.OK) throw new Exception(results);
+            if (response.StatusCode != HttpStatusCode.OK) throw new Exception(results);
         }
 
         #endregion
 
         private byte[] GetImage(string url)
         {
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            var response = (HttpWebResponse)request.GetResponse();
+            var request = (HttpWebRequest) WebRequest.Create(url);
+            var response = (HttpWebResponse) request.GetResponse();
 
             using var dataStream = response.GetResponseStream();
             using var sr = new BinaryReader(dataStream);
@@ -385,22 +464,49 @@ namespace NetCoreLineBotSDK.Utility
 
             return bytes;
         }
-        
+
         private async Task MakeReplyRequestToLineApi(LineMessageReq req)
         {
             var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                },
                 Formatting = Formatting.Indented,
-                Converters = { new StringEnumConverter(typeof(SnakeCaseNamingStrategy)) }
+                ContractResolver = new CustomPropertyNamesContractResolver()
+                {
+                    Case = IdentifierCase.Camel,
+                    PreserveUnderscores = false,
+                },
+                Converters = {new StringEnumConverter(typeof(SnakeCaseNamingStrategy))}
             }).Replace("\"", @"""");
 
 
             using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessageReplyApiBaseUrl}");
+            request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
+            request.Content = new StringContent(postJson);
+            request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            var response = await _httpClient.SendAsync(request);
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode == HttpStatusCode.OK) return;
+            throw new Exception(content);
+        }
+
+        private async Task MakePushRequestToLineApi(LineMessagePushReq req)
+        {
+            var postJson = JsonConvert.SerializeObject(req, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented,
+                ContractResolver = new CustomPropertyNamesContractResolver()
+                {
+                    Case = IdentifierCase.Camel,
+                    PreserveUnderscores = false,
+                },
+                Converters = {new StringEnumConverter(typeof(SnakeCaseNamingStrategy))}
+            }).Replace("\"", @"""");
+
+
+            using var request = new HttpRequestMessage(new HttpMethod("POST"), $"{LineMessagePushApiBaseUrl}");
             request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {_accessToken}");
             request.Content = new StringContent(postJson);
             request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");

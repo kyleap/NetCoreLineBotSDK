@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace NetCoreLineBotSDK.Sample.Apps
 {
@@ -19,6 +20,11 @@ namespace NetCoreLineBotSDK.Sample.Apps
         {
             _lineMessageUtility = lineMessageUtility;
             _factory = factory;
+        }
+
+        protected override Task OnFollowAsync(LineEvent ev)
+        {
+            return base.OnFollowAsync(ev);
         }
 
         protected override async Task OnMessageAsync(LineEvent ev)
@@ -44,9 +50,10 @@ namespace NetCoreLineBotSDK.Sample.Apps
             }
         }
 
-        protected override Task OnPostbackAsync(LineEvent ev)
+        protected override async Task OnPostbackAsync(LineEvent ev)
         {
-            return base.OnPostbackAsync(ev);
+            var postback = JsonConvert.SerializeObject(ev);
+            await _lineMessageUtility.ReplyMessageAsync(ev.replyToken, postback);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using NetCoreLineBotSDK.Interfaces;
+using NetCoreLineBotSDK.Models.Action;
 using NetCoreLineBotSDK.Models.Message;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Models;
@@ -7,23 +8,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NetCoreLineBotSDK.Sample.Providers.MessageTypes
+namespace NetCoreLineBotSDK.Sample.Providers.RichMenu
 {
-    public class ImageMessageProviders : IReplyIntent
+    public class RichMenuCancelProviders : IReplyIntent
     {
         private readonly MessageRequestDTO _request;
+        private readonly ILineMessageUtility _lineMessageUtility;
 
-        public ImageMessageProviders(MessageRequestDTO request)
+        public RichMenuCancelProviders(ILineMessageUtility lineMessageUtility,MessageRequestDTO request)
         {
+            _lineMessageUtility = lineMessageUtility;
             _request = request;
         }
 
-
         public async Task<IList<IRequestMessage>> GetReplyMessagesAsync()
         {
-            var msg = new ImageMessage(
-                originalContentUrl: "https://via.placeholder.com/1024x768/333.png/fff",
-                previewImageUrl: "https://via.placeholder.com/800x600/333.png/fff");
+            await _lineMessageUtility.UnLinkRichMenuToUser(_request.UserId);
+
+            var msg = new TextMessage($"已取消顯示選單");
 
             await Task.CompletedTask;
 

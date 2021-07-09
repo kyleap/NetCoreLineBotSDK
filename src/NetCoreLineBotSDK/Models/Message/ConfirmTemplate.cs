@@ -6,10 +6,10 @@ using NetCoreLineBotSDK.Models.Action;
 
 namespace NetCoreLineBotSDK.Models.Message
 {
-    public class ConfirmTemplate : ITemplate
+    public class ConfirmTemplate : BaseMessage, ITemplate
     {
         /// <summary>
-        /// 
+        /// Confirm Template
         /// </summary>
         /// <param name="text"></param>
         public ConfirmTemplate(string text = "您確定嗎?", List<IAction> actions = null)

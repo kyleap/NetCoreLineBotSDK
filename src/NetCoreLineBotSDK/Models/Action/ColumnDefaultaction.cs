@@ -1,4 +1,4 @@
-﻿namespace NetCoreLineBotSDK.Models.Message
+﻿namespace NetCoreLineBotSDK.Models.Action
 {
     public class ColumnDefaultaction
     {

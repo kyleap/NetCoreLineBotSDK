@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using NetCoreLineBotSDK.Sample.Apps;
 using NetCoreLineBotSDK.Sample.Interfaces;
 using NetCoreLineBotSDK.Sample.Providers;
+using NetCoreLineBotSDK.Sample.Providers.RichMenu;
 
 namespace NetCoreLineBotSDK.Sample
 {
