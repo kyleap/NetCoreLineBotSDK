@@ -1,5 +1,6 @@
 # 描述
 Line Message Api .NET 5 SDK
+
 # 如何安裝
 
 ```
@@ -80,16 +81,11 @@ public class LineBotSampleApp : LineBotApp
     }
 }
 ```
-
-## Demo
+# Demo
 
 您可加入以下 Bot 並執行指令測試結果，原始碼請見 `NetCoreLineBotSDK.Sample` 
 
 ![image](https://user-images.githubusercontent.com/8849818/124583387-906cd400-de85-11eb-907e-a61507fb6703.png)
-
-### Message Types
-
-Message Type 官方文件: https://developers.line.biz/en/docs/messaging-api/message-types/
 
 ```
 /text
@@ -104,10 +100,13 @@ Message Type 官方文件: https://developers.line.biz/en/docs/messaging-api/mes
 /template-confirm
 /template-carousel
 /template-carousel-images
+/quick-reply
+/sender
+/flex
+/action
+/richmenu
+/richmenu-cancel
 ```
-
-## 
-
 
 # Line message Api 官方文件
 
